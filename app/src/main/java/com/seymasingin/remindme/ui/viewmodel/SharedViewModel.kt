@@ -1,6 +1,7 @@
 package com.seymasingin.remindme.ui.viewmodel
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,6 @@ import com.seymasingin.remindme.data.repos.TodoRepository
 import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.Constants.MAX_TITLE_LENGTH
 import com.seymasingin.remindme.util.RequestState
-import com.seymasingin.remindme.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,12 +30,10 @@ class SharedViewModel @Inject constructor(
 
     val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
-    val id: MutableState<Int> = mutableStateOf(0)
+    val id: MutableState<Int> = mutableIntStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
     val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
-
-    val searchAppBarState: MutableState<SearchAppBarState> = mutableStateOf(SearchAppBarState.CLOSED)
 
     val searchTextState: MutableState<String> =  mutableStateOf("")
 
@@ -109,7 +107,6 @@ class SharedViewModel @Inject constructor(
         }catch (e: Exception){
             _searchTasks.value = RequestState.Error(e)
         }
-        searchAppBarState.value = SearchAppBarState.TRIGGERED
     }
 
     private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
@@ -132,7 +129,6 @@ class SharedViewModel @Inject constructor(
             )
             repo.addTask(toDoTask)
         }
-        searchAppBarState.value = SearchAppBarState.CLOSED
     }
 
     fun updateTask(){

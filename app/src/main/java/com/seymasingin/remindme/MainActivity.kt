@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.seymasingin.remindme.navigation.SetupNavigation
@@ -30,3 +31,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+

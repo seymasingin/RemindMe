@@ -21,10 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.seymasingin.remindme.R
-import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
 import com.seymasingin.remindme.util.Action
-import com.seymasingin.remindme.util.SearchAppBarState
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,7 +43,6 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
     val lowPriority = sharedViewModel.lowPriorityTasks.collectAsState()
     val highPiority = sharedViewModel.highPriorityTasks.collectAsState()
 
-    val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -61,7 +58,7 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            ListAppBar(sharedViewModel, searchAppBarState, searchTextState)
+            ListAppBar(sharedViewModel)
         } ,
         floatingActionButton = {
             ListFab(
@@ -72,6 +69,18 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
         Column(
             modifier = Modifier.padding(innerPadding)
         ){
+            SearchView(
+                text = searchTextState,
+                onTextChanged = {
+                    sharedViewModel.searchTextState.value = it
+                    sharedViewModel.getSearchTasks(it)
+                },
+                onCloseClicked = {
+                    sharedViewModel.searchTextState.value = ""
+                    sharedViewModel.getAllTasks()
+                },
+                sharedViewModel
+            )
             ListContent(
                 tasks = allTasks.value,
                 lowPriority = lowPriority.value,
@@ -79,8 +88,6 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
                 sortState = sortState.value,
                 searchedTasks = searchedTasks.value,
                 navigateToTaskScreen = navigateToTaskScreen,
-                searchAppBarState = searchAppBarState,
-
                 )
         }
     }
@@ -148,4 +155,6 @@ private fun undoDeletedTask(
         onUndoClicked(Action.UNDO)
     }
 }
+
+
 
