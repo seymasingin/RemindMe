@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
@@ -69,3 +70,5 @@ fun TaskScreen(
 fun displayToast(context: Context) {
     Toast.makeText(context, "Fields Empty", Toast.LENGTH_SHORT).show()
 }
+
+

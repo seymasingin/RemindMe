@@ -34,12 +34,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seymasingin.remindme.R
+import com.seymasingin.remindme.alarm.AndroidAlarmSchedular
 import com.seymasingin.remindme.components.PriorityDropdown
+import com.seymasingin.remindme.data.models.AlarmItem
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
@@ -70,8 +74,8 @@ fun TaskContent(
     var finalTime by remember { mutableStateOf("") }
     val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
 
-    //val scheduler = AndroidAlarmSchedular(context = LocalContext.current)
-    //var alarmItem: AlarmItem?
+    val scheduler = AndroidAlarmSchedular(context = LocalContext.current)
+    var alarmItem: AlarmItem?
 
     Column(
         modifier = Modifier
@@ -95,60 +99,62 @@ fun TaskContent(
             priority = priority,
             onPrioritySelected = onPrioritySelected
         )
+        Row(){
+            OutlinedButton(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = MEDIUM_PADDING, end= 4.dp)
 
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = MEDIUM_PADDING)
-                .height(PRIORITY_DROPDOWN_HEIGHT),
-            shape = MaterialTheme.shapes.extraSmall,
-            onClick = { showDateDialog.value = true },
+                    .height(PRIORITY_DROPDOWN_HEIGHT),
+                shape = MaterialTheme.shapes.extraSmall,
+                onClick = { showDateDialog.value = true },
 
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.DateRange,
-                    contentDescription = "",
-                    tint = Color.Black,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 2.dp),
-                    color = Color.Black,
-                    text = dateState.value,
-                    fontSize = 16.sp
-                )
+                ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.DateRange,
+                        contentDescription = "",
+                        tint = Color.Black,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        color = Color.Black,
+                        text = dateState.value,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+            OutlinedButton(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = MEDIUM_PADDING, start = 2.dp)
+                    .height(PRIORITY_DROPDOWN_HEIGHT),
+                shape = MaterialTheme.shapes.extraSmall,
+                onClick = { showTimeDialog.value = true },
+
+                ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_clock),
+                        contentDescription = "",
+                        tint = Color.Black,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 2.dp),
+                        color = Color.Black,
+                        text = timeState.value,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
 
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = MEDIUM_PADDING)
-                .height(PRIORITY_DROPDOWN_HEIGHT),
-            shape = MaterialTheme.shapes.extraSmall,
-            onClick = { showTimeDialog.value = true },
 
-            ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_clock),
-                    contentDescription = "",
-                    tint = Color.Black,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 2.dp),
-                    color = Color.Black,
-                    text = timeState.value,
-                    fontSize = 16.sp
-                )
-            }
-        }
 
         OutlinedTextField(
             modifier = Modifier.fillMaxSize(),
@@ -211,21 +217,6 @@ fun TaskContent(
                     showTimeDialog.value = false
                     timeState.value = finalTime
 
-                    /*val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
-                    val date = LocalDate.parse(dateState.value, dateFormatter)
-
-                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm a", Locale.getDefault())
-                    val time = LocalTime.parse(finalTime, timeFormatter)
-
-                    val localDateTime = LocalDateTime.of(date, time)
-
-                    alarmItem = AlarmItem(
-                        title = title,
-                        description = description,
-                        time = localDateTime
-                    )
-                    alarmItem?.let(scheduler::schedule)*/
-
                 },
             ) {
                 TimeInput(state = state)
@@ -233,3 +224,16 @@ fun TaskContent(
         }
         }
     }
+
+@Composable
+@Preview
+fun TaskContentPreview() {
+    TaskContent(
+        title = "sgesr",
+        onTitleChange = {  },
+        description = "sergerg" ,
+        onDescriptionChange ={} ,
+        priority = Priority.LOW ,
+        onPrioritySelected = {}
+    )
+}

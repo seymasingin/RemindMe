@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +28,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +43,7 @@ import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
 import com.seymasingin.remindme.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.seymasingin.remindme.ui.theme.TASK_ITEM_ELEVATION
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
+import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.RequestState
 
 @Composable
@@ -53,13 +54,15 @@ fun ListContent(
     highPriority: List<ToDoTask>,
     sortState: RequestState<Priority>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
+    onDeleteClicked: (Action, ToDoTask) -> Unit,
 ) {
     if(sortState is RequestState.Success){
         when{
             searchedTasks is RequestState.Success -> {
                 HandleListContent(
                     tasks = searchedTasks.data,
-                    navigateToTaskScreen = navigateToTaskScreen
+                    navigateToTaskScreen = navigateToTaskScreen,
+                    onDeleteClicked
                 )
             }
 
@@ -67,7 +70,8 @@ fun ListContent(
                 if(tasks is RequestState.Success){
                     HandleListContent(
                         tasks = tasks.data ,
-                        navigateToTaskScreen = navigateToTaskScreen
+                        navigateToTaskScreen = navigateToTaskScreen,
+                        onDeleteClicked
                     )
                 }
             }
@@ -75,13 +79,15 @@ fun ListContent(
             sortState.data == Priority.LOW -> {
                 HandleListContent(
                     tasks = lowPriority,
-                    navigateToTaskScreen = navigateToTaskScreen
+                    navigateToTaskScreen = navigateToTaskScreen,
+                    onDeleteClicked
                 )
             }
             sortState.data == Priority.HIGH -> {
                 HandleListContent(
                     tasks = highPriority,
-                    navigateToTaskScreen = navigateToTaskScreen
+                    navigateToTaskScreen = navigateToTaskScreen,
+                    onDeleteClicked
                 )
             }
         }
@@ -93,11 +99,11 @@ fun ListContent(
 fun DisplayTasks(
     tasks: List<ToDoTask>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
-
+    onDeleteClicked: (Action, ToDoTask) -> Unit,
     ) {
     LazyColumn{
         items(tasks){task ->
-            TaskItem(task, navigateToTaskScreen )
+            TaskItem(task, navigateToTaskScreen, onDeleteClicked )
         }
     }
 }
@@ -105,7 +111,8 @@ fun DisplayTasks(
 @Composable
 fun TaskItem(
     toDoTask: ToDoTask,
-    navigateToTaskScreen: (taskId: Int) -> Unit
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    onDeleteClicked: (Action, ToDoTask) -> Unit,
 ) {
     Surface(
         modifier = Modifier
@@ -113,7 +120,7 @@ fun TaskItem(
             .padding(all = MEDIUM_PADDING),
         color = Color.White,
         border = BorderStroke(1.dp, Color.LightGray),
-        shape = RectangleShape,
+        shape = MaterialTheme.shapes.extraSmall,
         shadowElevation = TASK_ITEM_ELEVATION,
         onClick = {navigateToTaskScreen(toDoTask.id)}
         ){
@@ -121,7 +128,9 @@ fun TaskItem(
             modifier = Modifier
                 .padding(all = LARGE_PADDING)
                 .fillMaxWidth()) {
-            Row{
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ){
                 Text(
                     modifier = Modifier.weight(8f),
                     text = toDoTask.title,
@@ -129,13 +138,14 @@ fun TaskItem(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
-                    )
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
+                        .weight(1f)
+                        .padding(end=6.dp),
                     contentAlignment = Alignment.TopEnd
-                    ){
+                ){
                     Canvas(modifier = Modifier
                         .size(PRIORITY_INDICATOR_SIZE)
                     ){
@@ -145,12 +155,36 @@ fun TaskItem(
                     }
                 }
             }
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = toDoTask.description,
-                color = Color.Black,
-                maxLines = 2
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ){
+                Text(
+                    modifier = Modifier.weight(8f),
+                    text = toDoTask.description,
+                    color = Color.Black,
+                    maxLines = 2
+                )
+                IconButton(
+                    onClick = {
+                        onDeleteClicked(Action.DELETE, toDoTask)
+                        //TODO(seyma)
+                    }
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.TopEnd
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "",
+                            tint= Color.DarkGray)
+                    }
+
+                }
+            }
+
         }
     }
 }
@@ -158,14 +192,16 @@ fun TaskItem(
 @Composable
 fun HandleListContent(
     tasks:List<ToDoTask>,
-    navigateToTaskScreen: (taskId: Int) -> Unit
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    onDeleteClicked: (Action, ToDoTask) -> Unit,
 ) {
     if(tasks.isEmpty()){
         EmptyContent()
     }
     DisplayTasks(
         tasks = tasks,
-        navigateToTaskScreen = navigateToTaskScreen
+        navigateToTaskScreen = navigateToTaskScreen,
+        onDeleteClicked = onDeleteClicked
     )
 }
 
@@ -230,14 +266,5 @@ fun SearchView(
     )
 }
 
-@Composable
-@Preview
-fun TaskItemPreview(){
-    TaskItem(
-        toDoTask = ToDoTask(
-            0,
-            "title",
-            "random",
-            Priority.MEDIUM),
-        navigateToTaskScreen ={})
-}
+
+

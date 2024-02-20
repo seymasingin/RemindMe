@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.seymasingin.remindme.R
@@ -54,7 +55,7 @@ fun DefaultListAppBar(
             ListAppBarActions(onSortClicked, onDeleteAllClicked)
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = colorResource(id = R.color.statusBar)
         )
     )
 }

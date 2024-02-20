@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.seymasingin.remindme.R
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
@@ -27,8 +28,10 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: SharedViewModel ) {
-
+fun ListScreen(
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    sharedViewModel: SharedViewModel,)
+   {
     LaunchedEffect(key1 = true){
         sharedViewModel.getAllTasks()
         sharedViewModel.readSortState()
@@ -88,6 +91,10 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
                 sortState = sortState.value,
                 searchedTasks = searchedTasks.value,
                 navigateToTaskScreen = navigateToTaskScreen,
+                onDeleteClicked = {action, task ->
+                    sharedViewModel.updateAction(newAction = action)
+                    sharedViewModel.updateTaskFields(selectedTask = task)
+                }
                 )
         }
     }
@@ -98,7 +105,7 @@ fun ListScreen( navigateToTaskScreen: (taskId: Int) -> Unit, sharedViewModel: Sh
 fun ListFab(onFabClick: (taskId: Int) -> Unit){
     FloatingActionButton(
         onClick = { onFabClick(-1) },
-        containerColor = Color.Blue
+        containerColor = colorResource(id = R.color.fabColor)
     ) {
         Icon(
             imageVector = Icons.Filled.Add ,
@@ -155,6 +162,7 @@ private fun undoDeletedTask(
         onUndoClicked(Action.UNDO)
     }
 }
+
 
 
 

@@ -28,7 +28,7 @@ class SharedViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
-    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
+    var action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
     val id: MutableState<Int> = mutableIntStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
@@ -152,6 +152,7 @@ class SharedViewModel @Inject constructor(
                 priority = priority.value
             )
             repo.deleteTask(toDoTask)
+            repo.getAllTasks
         }
     }
 
@@ -208,5 +209,9 @@ class SharedViewModel @Inject constructor(
 
     fun validateFields(): Boolean {
         return title.value.isNotEmpty() && description.value.isNotEmpty()
+    }
+
+    fun updateAction(newAction: Action) {
+        action.value = newAction
     }
 }

@@ -1,17 +1,13 @@
 package com.seymasingin.remindme.navigation.destinations
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import androidx.compose.runtime.LaunchedEffect
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.seymasingin.remindme.ui.screens.list.ListScreen
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
+import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.Constants.LIST_ARGUMENT_KEY
 import com.seymasingin.remindme.util.Constants.LIST_SCREEN
 import com.seymasingin.remindme.util.toAction
