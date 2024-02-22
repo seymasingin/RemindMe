@@ -44,14 +44,14 @@ fun ListScreen(
 
     val sortState = sharedViewModel.sortState.collectAsState()
     val lowPriority = sharedViewModel.lowPriorityTasks.collectAsState()
-    val highPiority = sharedViewModel.highPriorityTasks.collectAsState()
+    val highPriority = sharedViewModel.highPriorityTasks.collectAsState()
 
     val searchTextState: String by sharedViewModel.searchTextState
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     DisplaySnackBar(
-        snackbarHostState,
+        snackBarHostState,
         handleDatabaseActions = {sharedViewModel.handleDatabaseActions(action)},
         sharedViewModel.title.value,
         action,
@@ -59,7 +59,7 @@ fun ListScreen(
     )
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
             ListAppBar(sharedViewModel)
         } ,
@@ -87,7 +87,7 @@ fun ListScreen(
             ListContent(
                 tasks = allTasks.value,
                 lowPriority = lowPriority.value,
-                highPriority = highPiority.value,
+                highPriority = highPriority.value,
                 sortState = sortState.value,
                 searchedTasks = searchedTasks.value,
                 navigateToTaskScreen = navigateToTaskScreen,
@@ -98,7 +98,6 @@ fun ListScreen(
                 )
         }
     }
-
 }
 
 @Composable
@@ -141,7 +140,7 @@ fun DisplaySnackBar(
 private fun SetMessage(action:Action, taskTitle: String): String {
     return when(action){
         Action.DELETE_ALL -> "All Tasks Removed"
-        else -> "${action.name}: ${taskTitle} "
+        else -> "${action.name}: $taskTitle "
     }
 }
 

@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ContentAlpha
@@ -143,7 +142,7 @@ fun TaskItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .padding(end=6.dp),
+                        .padding(end= MEDIUM_PADDING),
                     contentAlignment = Alignment.TopEnd
                 ){
                     Canvas(modifier = Modifier
@@ -167,7 +166,6 @@ fun TaskItem(
                 IconButton(
                     onClick = {
                         onDeleteClicked(Action.DELETE, toDoTask)
-                        //TODO(seyma)
                     }
                 ) {
                     Box(

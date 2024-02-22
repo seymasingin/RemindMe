@@ -61,7 +61,8 @@ fun TaskScreen(
                 priority = priority,
                 onPrioritySelected = {
                     sharedViewModel.priority.value = it
-                }
+                },
+                context
             )
         }
     }

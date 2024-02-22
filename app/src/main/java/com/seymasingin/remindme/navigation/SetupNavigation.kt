@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import com.seymasingin.remindme.navigation.destinations.listComposable
 import com.seymasingin.remindme.navigation.destinations.taskComposable
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
-import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.Constants.LIST_SCREEN
 
 @Composable

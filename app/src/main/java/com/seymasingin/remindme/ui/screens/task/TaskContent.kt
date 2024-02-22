@@ -1,6 +1,7 @@
 package com.seymasingin.remindme.ui.screens.task
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,17 +35,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.seymasingin.remindme.R
-import com.seymasingin.remindme.alarm.AndroidAlarmSchedular
 import com.seymasingin.remindme.components.PriorityDropdown
-import com.seymasingin.remindme.data.models.AlarmItem
 import com.seymasingin.remindme.data.models.Priority
+import com.seymasingin.remindme.notification.ReminderWorker
 import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
 import com.seymasingin.remindme.ui.theme.PRIORITY_DROPDOWN_HEIGHT
@@ -52,6 +55,7 @@ import com.seymasingin.remindme.util.Tools
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +66,8 @@ fun TaskContent(
     description: String,
     onDescriptionChange: (String) -> Unit,
     priority: Priority,
-    onPrioritySelected: (Priority) -> Unit
+    onPrioritySelected: (Priority) -> Unit,
+    context: Context
 ) {
     val datePickerState = rememberDatePickerState()
     val showDateDialog = rememberSaveable { mutableStateOf(false) }
@@ -70,12 +75,9 @@ fun TaskContent(
 
     val showTimeDialog = rememberSaveable { mutableStateOf(false) }
     val timeState = remember { mutableStateOf("Time") }
-    val state = rememberTimePickerState(is24Hour = true)
+    val state = rememberTimePickerState(is24Hour = false)
     var finalTime by remember { mutableStateOf("") }
-    val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
-
-    val scheduler = AndroidAlarmSchedular(context = LocalContext.current)
-    var alarmItem: AlarmItem?
+    val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
 
     Column(
         modifier = Modifier
@@ -217,23 +219,38 @@ fun TaskContent(
                     showTimeDialog.value = false
                     timeState.value = finalTime
 
+                    val date = Tools.convertStringToDate(dateState.value)
+
+                    val reminderTimeMillis = Tools.convertTimeToLong(date, finalTime)
+
+                    setReminder(title, context, reminderTimeMillis)
+
                 },
             ) {
                 TimeInput(state = state)
             }
         }
-        }
     }
-
-@Composable
-@Preview
-fun TaskContentPreview() {
-    TaskContent(
-        title = "sgesr",
-        onTitleChange = {  },
-        description = "sergerg" ,
-        onDescriptionChange ={} ,
-        priority = Priority.LOW ,
-        onPrioritySelected = {}
-    )
 }
+
+private fun setReminder(reminderText: String, context: Context, reminderTimeMillis: Long) {
+
+    val constraints = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
+
+    val inputData = Data.Builder()
+        .putString("reminderText", reminderText)
+        .build()
+
+    val request = OneTimeWorkRequestBuilder<ReminderWorker>()
+        .setConstraints(constraints)
+        .setInputData(inputData)
+        .setInitialDelay(reminderTimeMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+        .build()
+
+    WorkManager.getInstance(context).enqueue(request)
+}
+
+
+

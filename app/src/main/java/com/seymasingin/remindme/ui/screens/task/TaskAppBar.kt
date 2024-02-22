@@ -50,7 +50,7 @@ fun NewTaskAppBar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = colorResource(id = R.color.statusBar)
         ),
         actions = {
             AddAction(onAddClicked = navigateToListScreen)
