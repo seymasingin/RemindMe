@@ -28,6 +28,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -66,18 +67,24 @@ fun TaskContent(
     description: String,
     onDescriptionChange: (String) -> Unit,
     priority: Priority,
+    date: String,
+    onDateChange: (String) -> Unit,
+    time: String,
+    onTimeChange: (String) -> Unit,
     onPrioritySelected: (Priority) -> Unit,
     context: Context
 ) {
     val datePickerState = rememberDatePickerState()
     val showDateDialog = rememberSaveable { mutableStateOf(false) }
-    val dateState = remember { mutableStateOf("Date") }
+    val dateState = remember { mutableStateOf("") }
 
     val showTimeDialog = rememberSaveable { mutableStateOf(false) }
-    val timeState = remember { mutableStateOf("Time") }
+    val timeState = remember { mutableStateOf("") }
     val state = rememberTimePickerState(is24Hour = false)
     var finalTime by remember { mutableStateOf("") }
     val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+
+    //val reminderTimeMillis by remember { mutableLongStateOf(0L) }
 
     Column(
         modifier = Modifier
@@ -123,7 +130,7 @@ fun TaskContent(
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
                         color = Color.Black,
-                        text = dateState.value,
+                        text = date,
                         fontSize = 16.sp
                     )
                 }
@@ -143,13 +150,13 @@ fun TaskContent(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_clock),
-                        contentDescription = "",
+                        contentDescription = "Time",
                         tint = Color.Black,
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
                         color = Color.Black,
-                        text = timeState.value,
+                        text = time,
                         fontSize = 16.sp
                     )
                 }
@@ -173,11 +180,12 @@ fun TaskContent(
                     TextButton(
                         onClick = {
                             showDateDialog.value = false
-                            val date = Tools.convertLongToTime(datePickerState.selectedDateMillis!!)
-                            dateState.value = date
+                            val dateTime = Tools.convertLongToTime(datePickerState.selectedDateMillis!!)
+                            dateState.value = dateTime
+                            onDateChange(dateState.value)
+
 
                         },
-
                         ) {
                         Text("Ok")
                     }
@@ -219,9 +227,12 @@ fun TaskContent(
                     showTimeDialog.value = false
                     timeState.value = finalTime
 
-                    val date = Tools.convertStringToDate(dateState.value)
+                    onTimeChange(timeState.value)
 
-                    val reminderTimeMillis = Tools.convertTimeToLong(date, finalTime)
+                    val dateTimeString = "${dateState.value} ${timeState.value}"
+                    val x = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+                    val dateTime = x.parse(dateTimeString)
+                    val reminderTimeMillis = dateTime?.time ?: 0L
 
                     setReminder(title, context, reminderTimeMillis)
 
@@ -251,6 +262,7 @@ private fun setReminder(reminderText: String, context: Context, reminderTimeMill
 
     WorkManager.getInstance(context).enqueue(request)
 }
+
 
 
 

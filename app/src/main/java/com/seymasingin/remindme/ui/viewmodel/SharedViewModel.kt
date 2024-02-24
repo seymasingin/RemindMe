@@ -34,6 +34,8 @@ class SharedViewModel @Inject constructor(
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
     val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
+    val date: MutableState<String> = mutableStateOf("")
+    val time: MutableState<String> = mutableStateOf("")
 
     val searchTextState: MutableState<String> =  mutableStateOf("")
 
@@ -120,43 +122,49 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun addTask(){
+    private fun addTask(){
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
                 title = title.value,
                 description = description.value,
-                priority = priority.value
+                priority = priority.value,
+                date = date.value,
+                time = time.value
             )
             repo.addTask(toDoTask)
         }
     }
 
-    fun updateTask(){
+    private fun updateTask(){
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
                 id = id.value,
                 title = title.value,
                 description = description.value,
-                priority = priority.value
+                priority = priority.value,
+                date = date.value,
+                time = time.value
             )
             repo.updateTask(toDoTask)
         }
     }
 
-    fun deleteTask(){
+    private fun deleteTask(){
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
                 id = id.value,
                 title = title.value,
                 description = description.value,
-                priority = priority.value
+                priority = priority.value,
+                date = date.value,
+                time = time.value
             )
             repo.deleteTask(toDoTask)
             repo.getAllTasks
         }
     }
 
-    fun deleteAll() {
+    private fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO)  {
             repo.deleteAllTasks()
         }
@@ -192,12 +200,16 @@ class SharedViewModel @Inject constructor(
             title.value = selectedTask.title
             description.value = selectedTask.description
             priority.value = selectedTask.priority
+            date.value = selectedTask.date
+            time.value = selectedTask.time
         }
         else {
             id.value =0
             title.value = ""
             description.value = ""
             priority.value = Priority.LOW
+            date.value = ""
+            time.value = ""
         }
     }
 
@@ -207,8 +219,19 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    fun updateDate(newDate: String) {
+        date.value = newDate
+    }
+
+    fun updateTime(newTime: String) {
+        time.value = newTime
+    }
+
     fun validateFields(): Boolean {
-        return title.value.isNotEmpty() && description.value.isNotEmpty()
+        return title.value.isNotEmpty() &&
+                description.value.isNotEmpty() &&
+                date.value.isNotEmpty() &&
+                time.value.isNotEmpty()
     }
 
     fun updateAction(newAction: Action) {

@@ -11,5 +11,7 @@ data class ToDoTask(
 
     val title: String,
     val description: String,
-    val priority: Priority
+    val priority: Priority,
+    val date: String,
+    val time: String
 )

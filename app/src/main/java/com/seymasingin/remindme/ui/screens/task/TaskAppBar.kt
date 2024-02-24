@@ -169,11 +169,3 @@ fun NewTaskAppBarPreview(){
     NewTaskAppBar(navigateToListScreen = {})
 }
 
-@Composable
-@Preview
-fun ExistingTaskAppBarPreview(){
-    ExistingTaskAppBar(
-        selectedTask = ToDoTask(0,"title", "random", Priority.MEDIUM),
-        navigateToListScreen = {}
-    )
-}

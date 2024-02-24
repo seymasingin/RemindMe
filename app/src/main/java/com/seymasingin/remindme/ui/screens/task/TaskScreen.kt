@@ -24,6 +24,8 @@ fun TaskScreen(
     val title: String by sharedViewModel.title
     val description: String by sharedViewModel.description
     val priority: Priority by sharedViewModel.priority
+    val date: String by sharedViewModel.date
+    val time: String by sharedViewModel.time
 
     val context = LocalContext.current
 
@@ -59,6 +61,14 @@ fun TaskScreen(
                     sharedViewModel.description.value = it
                 },
                 priority = priority,
+                date= date,
+                onDateChange = {
+                    sharedViewModel.updateDate(it)
+                },
+                time = time,
+                onTimeChange = {
+                    sharedViewModel.updateTime(it)
+                },
                 onPrioritySelected = {
                     sharedViewModel.priority.value = it
                 },

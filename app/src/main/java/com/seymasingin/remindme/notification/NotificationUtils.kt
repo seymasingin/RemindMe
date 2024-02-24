@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
+import com.seymasingin.remindme.R
 
 
 object NotificationUtils {
@@ -27,8 +28,9 @@ object NotificationUtils {
         notificationManager.createNotificationChannel(channel)
 
         builder = NotificationCompat.Builder(context, channelId)
-            .setContentTitle("İleri Kotlin - Work Manager")
+            .setContentTitle("Notification")
             .setContentText(reminderText)
+            .setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         notificationManager.notify(1, builder.build())
