@@ -167,6 +167,7 @@ class SharedViewModel @Inject constructor(
     private fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO)  {
             repo.deleteAllTasks()
+            repo.getAllTasks
         }
     }
 
@@ -184,9 +185,7 @@ class SharedViewModel @Inject constructor(
             Action.DELETE_ALL ->{
                 deleteAll()
             }
-            Action.UNDO ->{
 
-            }
             else -> {
 
             }

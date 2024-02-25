@@ -35,7 +35,7 @@ fun ListAppBar(
             sharedViewModel.persistSortState(it)
                         },
         onDeleteAllClicked = {
-            sharedViewModel.action.value = Action.DELETE_ALL
+            sharedViewModel.updateAction(newAction = Action.DELETE_ALL)
         }
     )
     }
@@ -62,10 +62,10 @@ fun DefaultListAppBar(
 @Composable
 fun ListAppBarActions(
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ){
         SortAction(onSortClicked)
-        DeleteAll (onDeleteClicked)
+        DeleteAll (onDeleteAllClicked)
 }
 
 @Composable
@@ -108,7 +108,7 @@ fun SortAction(onSortClicked: (Priority) -> Unit){
     }
 
 @Composable
-fun DeleteAll( onDeleteClicked: () -> Unit) {
+fun DeleteAll( onDeleteAllClicked: () -> Unit) {
     var expanded by remember {mutableStateOf(false)}
 
     IconButton (onClick= {expanded = true}){
@@ -126,7 +126,7 @@ fun DeleteAll( onDeleteClicked: () -> Unit) {
 
                 onClick = {
                     expanded = false
-                    onDeleteClicked
+                    onDeleteAllClicked()
                 }
             )
         }

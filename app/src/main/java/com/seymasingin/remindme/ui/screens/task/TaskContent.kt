@@ -28,7 +28,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,8 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.work.Constraints
@@ -108,11 +109,11 @@ fun TaskContent(
             priority = priority,
             onPrioritySelected = onPrioritySelected
         )
-        Row(){
+        Row{
             OutlinedButton(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = MEDIUM_PADDING, end= 4.dp)
+                    .padding(top = MEDIUM_PADDING, end = 4.dp)
 
                     .height(PRIORITY_DROPDOWN_HEIGHT),
                 shape = MaterialTheme.shapes.extraSmall,
@@ -261,6 +262,24 @@ private fun setReminder(reminderText: String, context: Context, reminderTimeMill
         .build()
 
     WorkManager.getInstance(context).enqueue(request)
+}
+
+@Composable
+@Preview
+fun TaskContentPreview(){
+    TaskContent(
+        title ="rerrg" ,
+        onTitleChange = {},
+        description = "sgg",
+        onDescriptionChange ={} ,
+        priority = Priority.LOW,
+        date = "11feb2024",
+        onDateChange = {},
+        time = "1253",
+        onTimeChange = {},
+        onPrioritySelected = {},
+        context = LocalContext.current
+    )
 }
 
 

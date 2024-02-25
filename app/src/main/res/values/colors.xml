@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="statusBar">#AAA9A9</color>
     <color name="fabColor">#757474</color>
+    <color name="taskColor">#ECECEC</color>
 </resources>

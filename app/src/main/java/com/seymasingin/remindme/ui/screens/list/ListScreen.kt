@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import com.seymasingin.remindme.R
@@ -94,7 +95,8 @@ fun ListScreen(
                 onDeleteClicked = {action, task ->
                     sharedViewModel.updateAction(newAction = action)
                     sharedViewModel.updateTaskFields(selectedTask = task)
-                }
+                },
+                context = LocalContext.current
                 )
         }
     }
@@ -129,7 +131,7 @@ fun DisplaySnackBar(
         if(action != Action.NO_ACTION){
             scope.launch {
                 val snackBarResult = snackbarHostState.showSnackbar(
-                    message = SetMessage(action, taskTitle), sectionLabel(action)
+                    message = SetMessage(action, taskTitle), sectionLabel()
                 )
                 undoDeletedTask(action,snackBarResult, onUndoClicked)
             }
@@ -144,12 +146,8 @@ private fun SetMessage(action:Action, taskTitle: String): String {
     }
 }
 
-private fun sectionLabel(action: Action): String {
-    return if(action.name == "DELETE"){
-        "UNDO"
-    } else{
-        "OK"
-    }
+private fun sectionLabel(): String {
+    return "OK"
 }
 
 private fun undoDeletedTask(
