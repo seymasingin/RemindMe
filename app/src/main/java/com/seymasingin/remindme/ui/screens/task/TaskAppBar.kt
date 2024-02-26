@@ -1,5 +1,6 @@
 package com.seymasingin.remindme.ui.screens.task
 
+import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -8,17 +9,16 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.seymasingin.remindme.R
-import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.util.Action
 
@@ -37,7 +37,6 @@ fun TaskAppBar(
 @Composable
 fun NewTaskAppBar(
     navigateToListScreen: (Action) -> Unit
-
 ){
     TopAppBar(
         navigationIcon = {
@@ -53,6 +52,7 @@ fun NewTaskAppBar(
             containerColor = colorResource(id = R.color.statusBar)
         ),
         actions = {
+            DeleteAction(onDeleteClicked = navigateToListScreen)
             AddAction(onAddClicked = navigateToListScreen)
         }
 
@@ -64,11 +64,11 @@ fun NewTaskAppBar(
 fun ExistingTaskAppBar(
     selectedTask: ToDoTask,
     navigateToListScreen: (Action) -> Unit
-
 ){
     TopAppBar(
         navigationIcon = {
             CloseAction(onCloseClicked = navigateToListScreen)
+
         },
         title= {
             Text(
@@ -158,6 +158,23 @@ fun AddAction(
         Icon(
             imageVector = Icons.Filled.Check,
             contentDescription = stringResource(id = R.string.add_arrow),
+            tint = Color.Black
+        )
+    }
+}
+
+@Composable
+fun SendAction(
+    onSendClicked: (taskId: Int) -> Unit
+){
+    IconButton(
+        onClick = {
+            //
+        }
+    ) {
+        Icon(
+            painterResource(id = R.drawable.ic_send),
+            contentDescription = "",
             tint = Color.Black
         )
     }

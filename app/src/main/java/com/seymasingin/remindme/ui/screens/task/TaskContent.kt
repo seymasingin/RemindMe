@@ -1,7 +1,15 @@
 package com.seymasingin.remindme.ui.screens.task
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,9 +46,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
@@ -59,6 +68,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +83,8 @@ fun TaskContent(
     time: String,
     onTimeChange: (String) -> Unit,
     onPrioritySelected: (Priority) -> Unit,
-    context: Context
+    context: Context,
+    navController: NavHostController,
 ) {
     val datePickerState = rememberDatePickerState()
     val showDateDialog = rememberSaveable { mutableStateOf(false) }
@@ -85,7 +96,25 @@ fun TaskContent(
     var finalTime by remember { mutableStateOf("") }
     val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
 
-    //val reminderTimeMillis by remember { mutableLongStateOf(0L) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> selectedImageUri = uri }
+    )
+
+    val hasNotificationPermission = LocalContext.current.let { context ->
+        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+    }
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            navController.navigateUp()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -163,9 +192,34 @@ fun TaskContent(
                 }
             }
         }
-
-
-
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = MEDIUM_PADDING, end = 4.dp)
+                    .height(PRIORITY_DROPDOWN_HEIGHT),
+                shape = MaterialTheme.shapes.extraSmall,
+                onClick = {
+                    singlePhotoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_add_photo),
+                        contentDescription = "",
+                        tint = Color.Black,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        color = Color.Black,
+                        text = "Add Photo",
+                        fontSize = 16.sp
+                    )
+            }
+        }
         OutlinedTextField(
             modifier = Modifier.fillMaxSize(),
             value = description,
@@ -173,7 +227,6 @@ fun TaskContent(
             label = { Text(text= stringResource(id = R.string.description) )},
             textStyle = MaterialTheme.typography.bodyLarge,
         )
-
         if (showDateDialog.value) {
             DatePickerDialog(
                 onDismissRequest = { showDateDialog.value = false },
@@ -235,7 +288,11 @@ fun TaskContent(
                     val dateTime = x.parse(dateTimeString)
                     val reminderTimeMillis = dateTime?.time ?: 0L
 
-                    setReminder(title, context, reminderTimeMillis)
+                    if (hasNotificationPermission) {
+                        setReminder(title, context, reminderTimeMillis)
+                    } else {
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
 
                 },
             ) {
@@ -264,23 +321,6 @@ private fun setReminder(reminderText: String, context: Context, reminderTimeMill
     WorkManager.getInstance(context).enqueue(request)
 }
 
-@Composable
-@Preview
-fun TaskContentPreview(){
-    TaskContent(
-        title ="rerrg" ,
-        onTitleChange = {},
-        description = "sgg",
-        onDescriptionChange ={} ,
-        priority = Priority.LOW,
-        date = "11feb2024",
-        onDateChange = {},
-        time = "1253",
-        onTimeChange = {},
-        onPrioritySelected = {},
-        context = LocalContext.current
-    )
-}
 
 
 

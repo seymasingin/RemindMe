@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
@@ -72,7 +72,8 @@ fun TaskScreen(
                 onPrioritySelected = {
                     sharedViewModel.priority.value = it
                 },
-                context
+                context,
+                navController = NavHostController(context)
             )
         }
     }
