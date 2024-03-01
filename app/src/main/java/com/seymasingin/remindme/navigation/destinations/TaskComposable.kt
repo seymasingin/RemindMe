@@ -35,9 +35,7 @@ fun NavGraphBuilder.taskComposable(
             if(selectedTask != null || taskId == -1){
                 sharedViewModel.updateTaskFields(selectedTask)
             }
-
         }
-
         TaskScreen( selectedTask, sharedViewModel, navigateToListScreen )
     }
 }

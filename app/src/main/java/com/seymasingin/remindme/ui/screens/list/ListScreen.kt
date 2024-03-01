@@ -31,7 +31,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListScreen(
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    sharedViewModel: SharedViewModel,)
+    sharedViewModel: SharedViewModel
+)
    {
     LaunchedEffect(key1 = true){
         sharedViewModel.getAllTasks()

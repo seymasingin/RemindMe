@@ -102,7 +102,6 @@ fun SortAction(onSortClicked: (Priority) -> Unit){
                     onSortClicked(Priority.NONE)
                 }
             )
-
             }
         }
     }

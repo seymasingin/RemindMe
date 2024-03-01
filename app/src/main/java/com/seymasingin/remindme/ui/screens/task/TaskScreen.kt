@@ -1,7 +1,10 @@
 package com.seymasingin.remindme.ui.screens.task
 
 import android.content.Context
+import android.net.Uri
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -26,6 +29,7 @@ fun TaskScreen(
     val priority: Priority by sharedViewModel.priority
     val date: String by sharedViewModel.date
     val time: String by sharedViewModel.time
+    val selectedImage: Uri by sharedViewModel.image
 
     val context = LocalContext.current
 
@@ -73,7 +77,11 @@ fun TaskScreen(
                     sharedViewModel.priority.value = it
                 },
                 context,
-                navController = NavHostController(context)
+                navController = NavHostController(context),
+                selectedImage= selectedImage,
+                onImageChange = {
+                    sharedViewModel.updateImage(it)
+                }
             )
         }
     }

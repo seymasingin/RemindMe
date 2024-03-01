@@ -1,8 +1,11 @@
 package com.seymasingin.remindme.ui.viewmodel
 
+import android.net.Uri
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seymasingin.remindme.data.models.Priority
@@ -36,6 +39,7 @@ class SharedViewModel @Inject constructor(
     val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
     val date: MutableState<String> = mutableStateOf("")
     val time: MutableState<String> = mutableStateOf("")
+    val image: MutableState<Uri> = mutableStateOf(Uri.parse(""))
 
     val searchTextState: MutableState<String> =  mutableStateOf("")
 
@@ -226,11 +230,12 @@ class SharedViewModel @Inject constructor(
         time.value = newTime
     }
 
+    fun updateImage(newImage: Uri){
+        image.value = newImage
+    }
+
     fun validateFields(): Boolean {
-        return title.value.isNotEmpty() &&
-                description.value.isNotEmpty() &&
-                date.value.isNotEmpty() &&
-                time.value.isNotEmpty()
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
     }
 
     fun updateAction(newAction: Action) {

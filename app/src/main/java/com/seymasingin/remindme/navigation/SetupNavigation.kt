@@ -9,6 +9,7 @@ import com.seymasingin.remindme.navigation.destinations.taskComposable
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
 import com.seymasingin.remindme.util.Constants.LIST_SCREEN
 
+
 @Composable
 fun SetupNavigation(
     navController: NavHostController,
@@ -25,7 +26,8 @@ fun SetupNavigation(
         )
         taskComposable(
             sharedViewModel,
-            screen.list
+            screen.list,
+
         )
     }
 }
