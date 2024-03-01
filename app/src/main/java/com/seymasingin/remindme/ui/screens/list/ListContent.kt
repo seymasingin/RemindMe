@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.wear.compose.material.ContentAlpha
 import com.seymasingin.remindme.R
 import com.seymasingin.remindme.data.models.Priority

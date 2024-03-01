@@ -3,7 +3,6 @@ package com.seymasingin.remindme.ui.screens.task
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -46,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,7 +66,6 @@ import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
 import com.seymasingin.remindme.ui.theme.PRIORITY_DROPDOWN_HEIGHT
 import com.seymasingin.remindme.util.Tools
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -102,8 +98,6 @@ fun TaskContent(
     val state = rememberTimePickerState(is24Hour = false)
     var finalTime by remember { mutableStateOf("") }
     val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
-
-    //val selectedImageState = remember { mutableStateOf(false) }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -177,7 +171,7 @@ fun TaskContent(
                         modifier = Modifier.padding(start = 4.dp),
                         color = Color.Black,
                         text = date,
-                        fontSize = 16.sp
+                        fontSize = 13.sp
                     )
                 }
             }
@@ -257,19 +251,8 @@ fun TaskContent(
                     AsyncImage(
                         model = image,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
+                        modifier = Modifier.fillMaxWidth()
                     )
-                }
-
-                Button(onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                }) {
-                    Text("Hide")
                 }
             }
         }
