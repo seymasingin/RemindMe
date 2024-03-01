@@ -215,7 +215,6 @@ fun TaskContent(
                 .height(PRIORITY_DROPDOWN_HEIGHT),
             shape = MaterialTheme.shapes.extraSmall,
             onClick = {
-
                 singlePhotoPickerLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
@@ -275,12 +274,15 @@ fun TaskContent(
             }
         }
     OutlinedTextField(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .weight(7f),
         value = description,
         onValueChange = {onDescriptionChange(it)},
         label = { Text(text= stringResource(id = R.string.description) )},
         textStyle = MaterialTheme.typography.bodyLarge,
     )
+
         if (showDateDialog.value) {
             DatePickerDialog(
                 onDismissRequest = { showDateDialog.value = false },

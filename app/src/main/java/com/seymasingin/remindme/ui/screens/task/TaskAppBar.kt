@@ -1,8 +1,9 @@
 package com.seymasingin.remindme.ui.screens.task
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,22 +14,25 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.seymasingin.remindme.R
+import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.util.Action
 
 @Composable
 fun TaskAppBar(
     selectedTask: ToDoTask?,
-    navigateToListScreen: (Action) -> Unit) {
-    if(selectedTask == null){
+    navigateToListScreen: (Action) -> Unit
+) {
+    if (selectedTask == null) {
         NewTaskAppBar(navigateToListScreen)
-    }else{
-        ExistingTaskAppBar(selectedTask, navigateToListScreen )
+    } else {
+        ExistingTaskAppBar(selectedTask, navigateToListScreen)
     }
 }
 
@@ -36,12 +40,12 @@ fun TaskAppBar(
 @Composable
 fun NewTaskAppBar(
     navigateToListScreen: (Action) -> Unit
-){
+) {
     TopAppBar(
         navigationIcon = {
             BackAction(onBackClicked = navigateToListScreen)
         },
-        title= {
+        title = {
             Text(
                 text = stringResource(id = R.string.add_task),
                 color = Color.Black
@@ -52,9 +56,7 @@ fun NewTaskAppBar(
         ),
         actions = {
             DeleteAction(onDeleteClicked = navigateToListScreen)
-            AddAction(onAddClicked = navigateToListScreen)
         }
-
     )
 }
 
@@ -63,13 +65,12 @@ fun NewTaskAppBar(
 fun ExistingTaskAppBar(
     selectedTask: ToDoTask,
     navigateToListScreen: (Action) -> Unit
-){
+) {
     TopAppBar(
         navigationIcon = {
             CloseAction(onCloseClicked = navigateToListScreen)
-
         },
-        title= {
+        title = {
             Text(
                 text = selectedTask.title,
                 color = Color.Black,
@@ -80,17 +81,16 @@ fun ExistingTaskAppBar(
             containerColor = colorResource(id = R.color.statusBar)
         ),
         actions = {
+            SendAction(context = LocalContext.current, selectedTask)
             DeleteAction(onDeleteClicked = navigateToListScreen)
-            UpdateAction(onUpdateClicked = navigateToListScreen)
         }
-
     )
 }
 
 @Composable
 fun CloseAction(
     onCloseClicked: (Action) -> Unit
-){
+) {
     IconButton(onClick = {
         onCloseClicked(Action.NO_ACTION)
     }) {
@@ -105,7 +105,7 @@ fun CloseAction(
 @Composable
 fun DeleteAction(
     onDeleteClicked: (Action) -> Unit
-){
+) {
     IconButton(onClick = {
         onDeleteClicked(Action.DELETE)
     }) {
@@ -118,24 +118,9 @@ fun DeleteAction(
 }
 
 @Composable
-fun UpdateAction(
-    onUpdateClicked: (Action) -> Unit
-){
-    IconButton(onClick = {
-        onUpdateClicked(Action.UPDATE)
-    }) {
-        Icon(
-            imageVector = Icons.Filled.Check,
-            contentDescription = stringResource(id = R.string.update_icon),
-            tint = Color.Black
-        )
-    }
-}
-
-@Composable
 fun BackAction(
     onBackClicked: (Action) -> Unit
-){
+) {
     IconButton(onClick = {
         onBackClicked(Action.NO_ACTION)
     }) {
@@ -148,27 +133,23 @@ fun BackAction(
 }
 
 @Composable
-fun AddAction(
-    onAddClicked: (Action) -> Unit
-){
-    IconButton(onClick = {
-        onAddClicked(Action.ADD)
-    }) {
-        Icon(
-            imageVector = Icons.Filled.Check,
-            contentDescription = stringResource(id = R.string.add_arrow),
-            tint = Color.Black
-        )
-    }
-}
-
-@Composable
 fun SendAction(
-    onSendClicked: (taskId: Int) -> Unit
-){
+    context: Context,
+    selectedTask: ToDoTask,
+) {
     IconButton(
         onClick = {
-            //
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "Görev Adı: ${selectedTask.title}\n\nDetaylar: " +
+                        "${selectedTask.description}\n\nTarih: " +
+                        "${selectedTask.date}\n\nSaat: " +
+                        "${selectedTask.time}"
+            )
+            intent.setType("text/plain")
+            intent.setPackage("com.whatsapp")
+            context.startActivity(intent)
         }
     ) {
         Icon(
@@ -181,7 +162,24 @@ fun SendAction(
 
 @Composable
 @Preview
-fun NewTaskAppBarPreview(){
+fun NewTaskAppBarPreview() {
     NewTaskAppBar(navigateToListScreen = {})
+}
+
+@Composable
+@Preview
+fun ExistingTaskAppBarPrevie() {
+    ExistingTaskAppBar(
+        selectedTask = ToDoTask(
+            0,
+            "",
+            "",
+            Priority.HIGH,
+            "",
+            "",
+            ""),
+        navigateToListScreen= {}
+    )
+
 }
 
