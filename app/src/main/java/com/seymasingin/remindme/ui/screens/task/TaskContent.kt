@@ -1,7 +1,6 @@
 package com.seymasingin.remindme.ui.screens.task
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -91,8 +90,8 @@ fun TaskContent(
     onPrioritySelected: (Priority) -> Unit,
     context: Context,
     navController: NavHostController,
-    selectedImage: Uri,
-    onImageChange: (Uri) -> Unit
+    image: String,
+    onImageChange: (String) -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
     val showDateDialog = rememberSaveable { mutableStateOf(false) }
@@ -104,15 +103,14 @@ fun TaskContent(
     var finalTime by remember { mutableStateOf("") }
     val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
 
-    val selectedImageState = remember { mutableStateOf(false) }
+    //val selectedImageState = remember { mutableStateOf(false) }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             if (uri != null) {
-                onImageChange(uri)
+                onImageChange(uri.toString())
             }
-            selectedImageState.value = true
         }
     )
 
@@ -237,7 +235,7 @@ fun TaskContent(
                     text = "Add Photo",
                     fontSize = 16.sp
                 )
-                if (selectedImageState.value) {
+                if (image.isNotEmpty()) {
                     Icon(
                         painterResource(id = R.drawable.ic_attachment),
                         contentDescription = "",
@@ -258,7 +256,7 @@ fun TaskContent(
             ) {
                 Box {
                     AsyncImage(
-                        model = selectedImage,
+                        model = image,
                         contentDescription = null,
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop
@@ -375,24 +373,23 @@ private fun setReminder(reminderText: String, context: Context, reminderTimeMill
     WorkManager.getInstance(context).enqueue(request)
 }
 
-
 @Composable
 @Preview
-fun TaskContentView(){
+fun x(){
     TaskContent(
-        title = "srhs",
+        title = "",
         onTitleChange = {},
-        description = "rseger",
-        onDescriptionChange = {},
+        description = "",
+        onDescriptionChange ={} ,
         priority = Priority.HIGH,
-        date = "25468",
-        onDateChange = {},
-        time = "rthrt",
+        date = "",
+        onDateChange ={} ,
+        time = "",
         onTimeChange = {},
-        onPrioritySelected = {},
+        onPrioritySelected ={} ,
         context = LocalContext.current,
-        navController= NavHostController(LocalContext.current),
-        selectedImage = Uri.parse("eg"),
+        navController = NavHostController(LocalContext.current),
+        image = "",
         onImageChange ={}
     )
 }

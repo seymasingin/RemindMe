@@ -292,7 +292,7 @@ fun SearchView(
 @Preview
 fun TaskItemPreview() {
     TaskItem(
-        toDoTask = ToDoTask(0, "HOMEWORK", "RemindMe", Priority.HIGH, "", ""),
+        toDoTask = ToDoTask(0, "HOMEWORK", "RemindMe", Priority.HIGH, "", "", ""),
         navigateToTaskScreen = {},
         onDeleteClicked = { action, task -> },
         context = LocalContext.current

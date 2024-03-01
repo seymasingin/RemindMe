@@ -29,7 +29,7 @@ fun TaskScreen(
     val priority: Priority by sharedViewModel.priority
     val date: String by sharedViewModel.date
     val time: String by sharedViewModel.time
-    val selectedImage: Uri by sharedViewModel.image
+    val image: String by sharedViewModel.image
 
     val context = LocalContext.current
 
@@ -78,7 +78,7 @@ fun TaskScreen(
                 },
                 context,
                 navController = NavHostController(context),
-                selectedImage= selectedImage,
+                image= image,
                 onImageChange = {
                     sharedViewModel.updateImage(it)
                 }

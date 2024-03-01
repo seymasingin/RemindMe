@@ -1,6 +1,5 @@
 package com.seymasingin.remindme.ui.screens.task
 
-import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check

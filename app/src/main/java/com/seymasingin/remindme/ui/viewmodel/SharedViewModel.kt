@@ -1,11 +1,8 @@
 package com.seymasingin.remindme.ui.viewmodel
 
-import android.net.Uri
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seymasingin.remindme.data.models.Priority
@@ -39,7 +36,7 @@ class SharedViewModel @Inject constructor(
     val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
     val date: MutableState<String> = mutableStateOf("")
     val time: MutableState<String> = mutableStateOf("")
-    val image: MutableState<Uri> = mutableStateOf(Uri.parse(""))
+    val image: MutableState<String> = mutableStateOf("")
 
     val searchTextState: MutableState<String> =  mutableStateOf("")
 
@@ -133,7 +130,8 @@ class SharedViewModel @Inject constructor(
                 description = description.value,
                 priority = priority.value,
                 date = date.value,
-                time = time.value
+                time = time.value,
+                image = image.value
             )
             repo.addTask(toDoTask)
         }
@@ -147,7 +145,8 @@ class SharedViewModel @Inject constructor(
                 description = description.value,
                 priority = priority.value,
                 date = date.value,
-                time = time.value
+                time = time.value,
+                image = image.value
             )
             repo.updateTask(toDoTask)
         }
@@ -161,7 +160,8 @@ class SharedViewModel @Inject constructor(
                 description = description.value,
                 priority = priority.value,
                 date = date.value,
-                time = time.value
+                time = time.value,
+                image = image.value
             )
             repo.deleteTask(toDoTask)
             repo.getAllTasks
@@ -205,6 +205,7 @@ class SharedViewModel @Inject constructor(
             priority.value = selectedTask.priority
             date.value = selectedTask.date
             time.value = selectedTask.time
+            image.value = selectedTask.image.toString()
         }
         else {
             id.value =0
@@ -213,6 +214,7 @@ class SharedViewModel @Inject constructor(
             priority.value = Priority.LOW
             date.value = ""
             time.value = ""
+            image.value = ""
         }
     }
 
@@ -230,7 +232,7 @@ class SharedViewModel @Inject constructor(
         time.value = newTime
     }
 
-    fun updateImage(newImage: Uri){
+    fun updateImage(newImage: String){
         image.value = newImage
     }
 
