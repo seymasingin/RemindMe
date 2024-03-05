@@ -27,7 +27,6 @@ fun SetupNavigation(
         taskComposable(
             sharedViewModel,
             screen.list,
-
         )
     }
 }

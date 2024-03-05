@@ -2,6 +2,7 @@ package com.seymasingin.remindme.ui.screens.list
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -184,7 +185,12 @@ fun TaskItem(
                     IconButton(
                         onClick = {
                             val intent = Intent(Intent.ACTION_SEND)
-                            intent.putExtra(Intent.EXTRA_TEXT, "Görev Adı: ${toDoTask.title}\n\nDetaylar: ${toDoTask.description}\n\nTarih: ${toDoTask.date}\n\nSaat: ${toDoTask.time}")
+                            intent.putExtra(Intent.EXTRA_TEXT,
+                                "Note Title: ${toDoTask.title}\n\n" +
+                                        "Description: ${toDoTask.description}\n\n" +
+                                        "Date: ${toDoTask.date}\n\n" +
+                                        "Time: ${toDoTask.time}")
+                            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(toDoTask.image))
                             intent.setType("text/plain")
                             intent.setPackage("com.whatsapp")
                             context.startActivity(intent)

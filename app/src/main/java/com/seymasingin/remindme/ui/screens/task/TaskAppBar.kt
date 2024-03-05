@@ -2,6 +2,7 @@ package com.seymasingin.remindme.ui.screens.task
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -147,6 +148,7 @@ fun SendAction(
                         "${selectedTask.date}\n\nSaat: " +
                         "${selectedTask.time}"
             )
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
             intent.setType("text/plain")
             intent.setPackage("com.whatsapp")
             context.startActivity(intent)
