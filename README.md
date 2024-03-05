@@ -2,7 +2,7 @@ A Reminder App which created with Kotlin and Jetpack Compose
 
 # <sub>**Pages**</sub>
 
-![1](https://github.com/seymasingin/RemindMe/assets/113527683/4b64d482-654f-4396-ba46-99e5e8e96750)
+![1](https://github.com/seymasingin/RemindMe/assets/113527683/026fd90f-51c5-4e52-b31c-ec0b27619f42)
 
 </br>
 
