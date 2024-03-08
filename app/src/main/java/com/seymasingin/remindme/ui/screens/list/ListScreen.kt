@@ -10,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -112,7 +110,7 @@ fun ListFab(onFabClick: (taskId: Int) -> Unit){
         Icon(
             imageVector = Icons.Filled.Add ,
             contentDescription = stringResource(id = R.string.add_button),
-            tint = Color.White
+            tint= colorResource(id = R.color.textcolor)
         )
     }
 }
@@ -134,7 +132,6 @@ fun DisplaySnackBar(
                 val snackBarResult = snackbarHostState.showSnackbar(
                     message = SetMessage(action, taskTitle), sectionLabel()
                 )
-                undoDeletedTask(action,snackBarResult, onUndoClicked)
             }
         }
     }
@@ -143,22 +140,12 @@ fun DisplaySnackBar(
 private fun SetMessage(action:Action, taskTitle: String): String {
     return when(action){
         Action.DELETE_ALL -> "All Tasks Removed"
-        else -> "${action.name}: $taskTitle "
+        else -> "${action.name}: $taskTitle"
     }
 }
 
 private fun sectionLabel(): String {
     return "OK"
-}
-
-private fun undoDeletedTask(
-    action: Action,
-    snackBarResult: SnackbarResult,
-    onUndoClicked: (Action) -> Unit
-){
-    if(snackBarResult == SnackbarResult.ActionPerformed && action == Action.DELETE){
-        onUndoClicked(Action.UNDO)
-    }
 }
 
 

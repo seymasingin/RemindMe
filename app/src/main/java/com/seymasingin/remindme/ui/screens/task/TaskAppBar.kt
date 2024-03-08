@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -49,11 +50,11 @@ fun NewTaskAppBar(
         title = {
             Text(
                 text = stringResource(id = R.string.add_task),
-                color = Color.Black
+                color = colorResource(id = R.color.textcolor)
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.statusBar)
+            containerColor = MaterialTheme.colorScheme.background
         ),
         actions = {
             DeleteAction(onDeleteClicked = navigateToListScreen)
@@ -74,12 +75,12 @@ fun ExistingTaskAppBar(
         title = {
             Text(
                 text = selectedTask.title,
-                color = Color.Black,
+                color = colorResource(id = R.color.textcolor),
                 maxLines = 1
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.statusBar)
+            containerColor = MaterialTheme.colorScheme.background
         ),
         actions = {
             SendAction(context = LocalContext.current, selectedTask)
@@ -98,7 +99,7 @@ fun CloseAction(
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = stringResource(id = R.string.close_icon),
-            tint = Color.Black
+            tint = colorResource(id = R.color.textcolor)
         )
     }
 }
@@ -113,7 +114,7 @@ fun DeleteAction(
         Icon(
             imageVector = Icons.Filled.Delete,
             contentDescription = stringResource(id = R.string.delete_icon),
-            tint = Color.Black
+            tint = colorResource(id = R.color.textcolor)
         )
     }
 }
@@ -128,7 +129,7 @@ fun BackAction(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(id = R.string.back_arrow),
-            tint = Color.Black
+            tint = colorResource(id = R.color.textcolor)
         )
     }
 }
@@ -157,7 +158,7 @@ fun SendAction(
         Icon(
             painterResource(id = R.drawable.ic_send),
             contentDescription = "",
-            tint = Color.Black
+            tint = colorResource(id = R.color.textcolor)
         )
     }
 }

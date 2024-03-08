@@ -103,7 +103,12 @@ fun TaskScreen(
                     .weight(1f),
                 onClick = {
                     if(selectedTask == null){
-                        navigateToListScreen(Action.ADD)
+                        if(sharedViewModel.validateFields()){
+                            navigateToListScreen(Action.ADD)
+                        }
+                        else{
+                            displayToast(context)
+                        }
                     }else{
                         navigateToListScreen(Action.UPDATE)
                     }
@@ -111,12 +116,12 @@ fun TaskScreen(
                 elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
                 shape = MaterialTheme.shapes.extraSmall,
                 colors = ButtonDefaults.elevatedButtonColors(
-                    containerColor = colorResource(id = R.color.statusBar)
+                    containerColor = colorResource(id = R.color.fabColor)
                 ),
             ){
                 Text(
                     text = "SAVE NOTE",
-                    color = Color.Black,
+                    color = colorResource(id = R.color.textcolor),
                     fontSize = 20.sp
                 )
             }

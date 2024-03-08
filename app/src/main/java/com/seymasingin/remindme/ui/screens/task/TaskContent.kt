@@ -1,6 +1,7 @@
 package com.seymasingin.remindme.ui.screens.task
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -23,6 +24,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerFormatter
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
@@ -37,6 +40,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +53,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,11 +75,13 @@ import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
 import com.seymasingin.remindme.ui.theme.PRIORITY_DROPDOWN_HEIGHT
 import com.seymasingin.remindme.util.Tools
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskContent(
@@ -93,15 +100,16 @@ fun TaskContent(
     image: String,
     onImageChange: (String) -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
-    val showDateDialog = rememberSaveable { mutableStateOf(false) }
-    val dateState = remember { mutableStateOf("") }
 
-    val showTimeDialog = rememberSaveable { mutableStateOf(false) }
-    val timeState = remember { mutableStateOf("") }
-    val state = rememberTimePickerState(is24Hour = false)
+    val showDateDialog = rememberSaveable { mutableStateOf(false) }
+    var dateResult = remember { mutableStateOf("") }
+
+    var showTimePicker by remember { mutableStateOf(false) }
     var finalTime by remember { mutableStateOf("") }
-    val formatter = remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+    val state = rememberTimePickerState(is24Hour = true)
+    val formatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
+    val snackState = remember { SnackbarHostState() }
+    val snackScope = rememberCoroutineScope()
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -160,19 +168,19 @@ fun TaskContent(
                 shape = MaterialTheme.shapes.extraSmall,
                 onClick = {
                     showDateDialog.value = true
-                          },
-                ) {
+                },
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = Icons.Filled.DateRange,
                         contentDescription = "",
-                        tint = Color.Black,
+                        tint = colorResource(id = R.color.textcolor),
                     )
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
-                        color = Color.Black,
+                        color = colorResource(id = R.color.textcolor),
                         text = date,
                         fontSize = 13.sp
                     )
@@ -185,7 +193,7 @@ fun TaskContent(
                     .padding(top = MEDIUM_PADDING, start = 2.dp)
                     .height(PRIORITY_DROPDOWN_HEIGHT),
                 shape = MaterialTheme.shapes.extraSmall,
-                onClick = { showTimeDialog.value = true },
+                onClick = { showTimePicker = true },
 
                 ) {
                 Row(
@@ -194,11 +202,11 @@ fun TaskContent(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_clock),
                         contentDescription = "Time",
-                        tint = Color.Black,
+                        tint = colorResource(id = R.color.textcolor),
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
-                        color = Color.Black,
+                        color = colorResource(id = R.color.textcolor),
                         text = time,
                         fontSize = 16.sp
                     )
@@ -216,18 +224,18 @@ fun TaskContent(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
             },
-            ) {
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     painterResource(id = R.drawable.ic_add_photo),
                     contentDescription = "",
-                    tint = Color.Black,
+                    tint = colorResource(id = R.color.textcolor),
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    color = Color.Black,
+                    color = colorResource(id = R.color.textcolor),
                     text = "Add Photo",
                     fontSize = 16.sp
                 )
@@ -235,14 +243,14 @@ fun TaskContent(
                     Icon(
                         painterResource(id = R.drawable.ic_attachment),
                         contentDescription = "",
-                        tint = Color.Black,
+                        tint = colorResource(id = R.color.textcolor),
                         modifier = Modifier.clickable {
                             showBottomSheet = true
                         }
                     )
                 }
             }
-    }
+        }
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -259,81 +267,77 @@ fun TaskContent(
                 }
             }
         }
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxSize()
-            .weight(7f),
-        value = description,
-        onValueChange = {onDescriptionChange(it)},
-        label = { Text(text= stringResource(id = R.string.description) )},
-        textStyle = MaterialTheme.typography.bodyLarge,
-    )
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(7f),
+            value = description,
+            onValueChange = {onDescriptionChange(it)},
+            label = { Text(text= stringResource(id = R.string.description) )},
+            textStyle = MaterialTheme.typography.bodyLarge,
+        )
 
         if (showDateDialog.value) {
+            val datePickerState = rememberDatePickerState()
+            val confirmEnabled = derivedStateOf { true }
             DatePickerDialog(
-                onDismissRequest = { showDateDialog.value = false },
+                onDismissRequest = {
+                    showDateDialog.value = false
+                },
                 confirmButton = {
                     TextButton(
                         onClick = {
                             showDateDialog.value = false
-                            val dateTime = Tools.convertLongToTime(datePickerState.selectedDateMillis!!)
-                            dateState.value = dateTime
-                            onDateChange(dateState.value)
+                            val dateTime = datePickerState.selectedDateMillis?.let {
+                                Tools.convertLongToTime(it)
+                            }
+                            if (dateTime != null) {
+                                dateResult.value = dateTime
+                            }
+                            onDateChange(dateResult.value)
                         },
-                        ) {
-                        Text("Ok")
+                        enabled = confirmEnabled.value
+                    ) {
+                        Text("OK")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDateDialog.value = false }) {
+                    TextButton(
+                        onClick = {
+                            showDateDialog.value = false
+                        }
+                    ) {
                         Text("Cancel")
                     }
                 }
             ) {
-                DatePicker(
-                    state = datePickerState,
-                    dateFormatter = remember { DatePickerFormatter() },
-                    title = {
-                        DatePickerDefaults.DatePickerTitle(
-                            datePickerState,
-                            modifier = Modifier.padding(all= 2.dp)
-                        )
-                    },
-                    headline = {
-                        DatePickerDefaults.DatePickerHeadline(
-                            datePickerState,
-                            remember { DatePickerFormatter() },
-                            modifier = Modifier.padding(all= 2.dp)
-                        )
-                    }
-                )
+                DatePicker(state = datePickerState)
             }
         }
-        if (showTimeDialog.value) {
+
+        if (showTimePicker) {
             TimePickerDialog(
-                onCancel = { showTimeDialog.value = false },
+                onCancel = { showTimePicker = false },
                 onConfirm = {
                     val cal = Calendar.getInstance()
                     cal.set(Calendar.HOUR_OF_DAY, state.hour)
                     cal.set(Calendar.MINUTE, state.minute)
                     cal.isLenient = false
                     finalTime = formatter.format(cal.time)
-                    showTimeDialog.value = false
-                    timeState.value = finalTime
+                    snackScope.launch {
+                        snackState.showSnackbar("Entered time: $finalTime")
+                    }
+                    showTimePicker = false
 
-                    onTimeChange(timeState.value)
+                    onTimeChange(finalTime)
 
-                    val dateTimeString = "${dateState.value} ${timeState.value}"
-                    val x = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
-                    val dateTime = x.parse(dateTimeString)
-                    val reminderTimeMillis = dateTime?.time ?: 0L
+                    val reminderTimeMillis = cal.timeInMillis
 
                     if (hasNotificationPermission) {
                         setReminder(title, context, reminderTimeMillis)
                     } else {
                         requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
-
                 },
             ) {
                 TimeInput(state = state)
@@ -360,28 +364,4 @@ private fun setReminder(reminderText: String, context: Context, reminderTimeMill
 
     WorkManager.getInstance(context).enqueue(request)
 }
-
-@Composable
-@Preview
-fun x(){
-    TaskContent(
-        title = "",
-        onTitleChange = {},
-        description = "",
-        onDescriptionChange ={} ,
-        priority = Priority.HIGH,
-        date = "",
-        onDateChange ={} ,
-        time = "",
-        onTimeChange = {},
-        onPrioritySelected ={} ,
-        context = LocalContext.current,
-        navController = NavHostController(LocalContext.current),
-        image = "",
-        onImageChange ={}
-    )
-}
-
-
-
 

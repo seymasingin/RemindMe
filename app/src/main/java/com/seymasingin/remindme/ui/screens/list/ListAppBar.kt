@@ -1,11 +1,13 @@
 package com.seymasingin.remindme.ui.screens.list
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +42,7 @@ fun ListAppBar(
     )
     }
 
+@SuppressLint("ResourceAsColor")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultListAppBar(
@@ -54,7 +57,7 @@ fun DefaultListAppBar(
             ListAppBarActions(onSortClicked, onDeleteAllClicked)
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.statusBar)
+            containerColor = MaterialTheme.colorScheme.background
         )
     )
 }
@@ -75,7 +78,7 @@ fun SortAction(onSortClicked: (Priority) -> Unit){
     IconButton (onClick= {expanded = true}){
         Icon(painter = painterResource(id = R.drawable.ic_filter),
             contentDescription = stringResource(id = R.string.sort_action),
-            tint = Color.Black
+            tint= colorResource(id = R.color.textcolor)
         )
         DropdownMenu(
             expanded = expanded,
@@ -113,7 +116,7 @@ fun DeleteAll( onDeleteAllClicked: () -> Unit) {
     IconButton (onClick= {expanded = true}){
         Icon(painter = painterResource(id = R.drawable.ic_vertical_menu),
             contentDescription = stringResource(id = R.string.delete_all_action),
-            tint = Color.Black
+            tint= colorResource(id = R.color.textcolor)
         )
         DropdownMenu(
             expanded = expanded,
@@ -121,7 +124,11 @@ fun DeleteAll( onDeleteAllClicked: () -> Unit) {
         ){
             DropdownMenuItem(
                 modifier = Modifier.padding(start = LARGE_PADDING),
-                text = { Text(text = stringResource(id = R.string.delete_all_action), color = Color.Black) },
+                text = {
+                    Text(
+                        text = stringResource(id = R.string.delete_all_action),
+                        color = colorResource(id = R.color.textcolor)
+                    ) },
 
                 onClick = {
                     expanded = false

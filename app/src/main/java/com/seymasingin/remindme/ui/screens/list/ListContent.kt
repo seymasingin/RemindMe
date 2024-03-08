@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -153,7 +152,7 @@ fun TaskItem(
                     Text(
                         modifier = Modifier.weight(8f),
                         text = toDoTask.title,
-                        color = Color.Black,
+                        color = colorResource(id = R.color.textcolor),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
@@ -169,7 +168,8 @@ fun TaskItem(
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = "",
-                                tint= Color.DarkGray)
+                                tint= colorResource(id = R.color.textcolor)
+                            )
                         }
                     }
                 }
@@ -179,7 +179,7 @@ fun TaskItem(
                     Text(
                         modifier = Modifier.weight(8f),
                         text = toDoTask.description,
-                        color = Color.Black,
+                        color = colorResource(id = R.color.textcolor),
                         maxLines = 2
                     )
                     IconButton(
@@ -194,7 +194,7 @@ fun TaskItem(
                             intent.setType("text/plain")
                             intent.setPackage("com.whatsapp")
                             context.startActivity(intent)
-                        }
+                        },
                     ) {
                         Box(
                             modifier = Modifier
@@ -205,7 +205,8 @@ fun TaskItem(
                                 painterResource(id = R.drawable.ic_send),
                                 modifier = Modifier.size(20.dp),
                                 contentDescription = "",
-                                tint= Color.DarkGray)
+                                tint= colorResource(id = R.color.textcolor)
+                            )
                         }
                     }
                 }
@@ -244,7 +245,7 @@ fun SearchView(
             .fillMaxWidth()
             .height(70.dp)
             .padding(all = MEDIUM_PADDING)
-            .background(color = Color.White),
+            ,
         value = text,
         onValueChange = {
             onTextChanged(it)
@@ -253,10 +254,12 @@ fun SearchView(
         placeholder = {
             Text(
                 modifier = Modifier.alpha(ContentAlpha.medium),
-                text= stringResource(id = R.string.search_placeholder), color = Color.Black) },
+                text= stringResource(id = R.string.search_placeholder),
+                color = colorResource(id = R.color.textcolor)
+            ) },
         textStyle =
             TextStyle(
-                color = Color.Black,
+                color = colorResource(id = R.color.textcolor),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
             ),
         singleLine = true,
@@ -265,7 +268,7 @@ fun SearchView(
                 modifier= Modifier.alpha(ContentAlpha.disabled),
                 imageVector = Icons.Filled.Search,
                 contentDescription = stringResource(id = R.string.search_icon),
-                tint = Color.Black
+                tint = colorResource(id = R.color.textcolor)
             )
         },
         trailingIcon = {
@@ -278,17 +281,16 @@ fun SearchView(
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(id = R.string.close_icon),
-                    tint = Color.Black
+                    tint = colorResource(id = R.color.textcolor)
                 )
             }
         },
         colors = TextFieldDefaults.colors(
-            cursorColor = MaterialTheme.colorScheme.primary,
             focusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White
+            unfocusedContainerColor = colorResource(id = R.color.fabColor),
+            focusedContainerColor = colorResource(id = R.color.fabColor)
         )
     )
 }

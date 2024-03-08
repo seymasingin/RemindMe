@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="statusBar">#202020</color>
+    <color name="fabColor">#404040</color>
+    <color name="taskColor">#292929</color>
+    <color name="toolbar">#202020</color>
+    <color name="textcolor">#FFFFFF</color>
+</resources>

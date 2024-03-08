@@ -12,7 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val LightGray = Color(0xFFC4C4C4)
 val MediumGray = Color(0xFF838282)
-val DarktGray = Color(0xFF3C3B3B)
+val DarkGray = Color(0xFF3C3B3B)
 
 val LowPriorityColor = Color(0xFF8F8035)
 val MediumPriorityColor = Color(0xFF2F5C69)
