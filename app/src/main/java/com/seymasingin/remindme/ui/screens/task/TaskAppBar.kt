@@ -2,7 +2,9 @@ package com.seymasingin.remindme.ui.screens.task
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -141,18 +143,26 @@ fun SendAction(
 ) {
     IconButton(
         onClick = {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.putExtra(
-                Intent.EXTRA_TEXT,
-                "Görev Adı: ${selectedTask.title}\n\nDetaylar: " +
-                        "${selectedTask.description}\n\nTarih: " +
-                        "${selectedTask.date}\n\nSaat: " +
-                        "${selectedTask.time}"
-            )
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
-            intent.setType("text/plain")
-            intent.setPackage("com.whatsapp")
-            context.startActivity(intent)
+            val hasWhatsApp = try {
+                context.packageManager.getPackageInfo("com.whatsapp", 0) != null
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+
+            if (hasWhatsApp) {
+                val intent = Intent(Intent.ACTION_SEND)
+
+                intent.putExtra(Intent.EXTRA_TEXT, "Note Title: ${selectedTask.title}\n\n" +
+                        "Description: ${selectedTask.description}\n\n" +
+                        "Date: ${selectedTask.date}\n\n" +
+                        "Time: ${selectedTask.time}")
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
+                intent.setPackage("com.whatsapp")
+                intent.setType("text/plain")
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+            }
         }
     ) {
         Icon(

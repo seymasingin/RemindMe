@@ -2,7 +2,9 @@ package com.seymasingin.remindme.ui.screens.list
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -184,16 +186,26 @@ fun TaskItem(
                     )
                     IconButton(
                         onClick = {
-                            val intent = Intent(Intent.ACTION_SEND)
-                            intent.putExtra(Intent.EXTRA_TEXT,
-                                "Note Title: ${toDoTask.title}\n\n" +
+                            val hasWhatsApp = try {
+                                context.packageManager.getPackageInfo("com.whatsapp", 0) != null
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                false
+                            }
+
+                            if (hasWhatsApp) {
+                                val intent = Intent(Intent.ACTION_SEND)
+
+                                intent.putExtra(Intent.EXTRA_TEXT, "Note Title: ${toDoTask.title}\n\n" +
                                         "Description: ${toDoTask.description}\n\n" +
                                         "Date: ${toDoTask.date}\n\n" +
                                         "Time: ${toDoTask.time}")
-                            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(toDoTask.image))
-                            intent.setType("text/plain")
-                            intent.setPackage("com.whatsapp")
-                            context.startActivity(intent)
+                                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(toDoTask.image))
+                                intent.setPackage("com.whatsapp")
+                                intent.setType("text/plain")
+                                context.startActivity(intent)
+                            } else {
+                                Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+                            }
                         },
                     ) {
                         Box(
