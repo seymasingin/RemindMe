@@ -3,6 +3,7 @@ package com.seymasingin.remindme.ui.screens.task
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -145,34 +146,35 @@ fun SendAction(
 ) {
     IconButton(
         onClick = {
-            val whatsappInstalled: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                try {
-                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.ApplicationInfoFlags.of(0))
-                    true
-                } catch (e: PackageManager.NameNotFoundException) {
-                    false
+            val pm = context.packageManager
+            val appInfo: ApplicationInfo? = try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pm.getApplicationInfo(
+                        "com.whatsapp",
+                        PackageManager.ApplicationInfoFlags.of(0)
+                    )
+                } else {
+                    pm.getApplicationInfo("com.whatsapp", 0)
                 }
-            } else {
-                try {
-                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.GET_META_DATA)
-                    true
-                } catch (e: Exception) {
-                    false
-                }
+            } catch (e: PackageManager.NameNotFoundException) {
+                null
             }
 
-            if (whatsappInstalled) {
+            if (appInfo != null) {
                 val intent = Intent(Intent.ACTION_SEND)
-                intent.putExtra(Intent.EXTRA_TEXT, "Note Title: ${selectedTask.title}\n\n" +
-                        "Description: ${selectedTask.description}\n\n" )
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Note Title: ${selectedTask.title}\n\n" +
+                            "Description: ${selectedTask.description}\n\n"
+                )
                 if (!selectedTask.image.isNullOrEmpty()) {
                     intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
                 }
                 intent.setPackage("com.whatsapp")
-                intent.type="text/plain"
+                intent.setType("text/plain")
                 context.startActivity(intent)
             } else {
-                Toast.makeText(context, "Please install whatsapp first.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Please install WhatsApp first.", Toast.LENGTH_SHORT).show()
             }
         }
     ) {

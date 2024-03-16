@@ -102,7 +102,7 @@ fun TaskContent(
 ) {
 
     val showDateDialog = rememberSaveable { mutableStateOf(false) }
-    var dateResult = remember { mutableStateOf("") }
+    val dateResult = remember { mutableStateOf("") }
 
     var showTimePicker by remember { mutableStateOf(false) }
     var finalTime by remember { mutableStateOf("") }
@@ -120,7 +120,7 @@ fun TaskContent(
         }
     )
 
-    val hasNotificationPermission = LocalContext.current.let { context ->
+    val hasNotificationPermission = LocalContext.current.let {
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
     }
