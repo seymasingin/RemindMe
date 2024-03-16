@@ -80,7 +80,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,10 +120,13 @@ fun TaskContent(
         }
     )
 
-    val hasNotificationPermission = LocalContext.current.let {
-        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-    }
+    val notificationPermission = Manifest.permission.POST_NOTIFICATIONS
+    val vibratePermission = Manifest.permission.VIBRATE
+
+    val hasNotificationPermission = (
+            ContextCompat.checkSelfPermission(context, notificationPermission) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, vibratePermission) == PackageManager.PERMISSION_GRANTED
+            )
 
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()

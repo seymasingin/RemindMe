@@ -26,7 +26,6 @@ import com.seymasingin.remindme.components.PriorityItem
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
-import com.seymasingin.remindme.util.Action
 
 @Composable
 fun ListAppBar(
@@ -37,7 +36,7 @@ fun ListAppBar(
             sharedViewModel.persistSortState(it)
                         },
         onDeleteAllClicked = {
-            sharedViewModel.updateAction(newAction = Action.DELETE_ALL)
+            sharedViewModel.deleteAll()
         }
     )
     }

@@ -9,7 +9,6 @@ import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.data.repos.DataStoreRepository
 import com.seymasingin.remindme.data.repos.TodoRepository
-import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.Constants.MAX_TITLE_LENGTH
 import com.seymasingin.remindme.util.RequestState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,8 +26,6 @@ class SharedViewModel @Inject constructor(
     private val repo: TodoRepository,
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
-
-    var action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
     val id: MutableState<Int> = mutableIntStateOf(0)
     val title: MutableState<String> = mutableStateOf("")
@@ -123,7 +120,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    private fun addTask(){
+    fun addTask(){
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
                 title = title.value,
@@ -137,7 +134,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    private fun updateTask(){
+    fun updateTask(){
         viewModelScope.launch(Dispatchers.IO) {
             val toDoTask = ToDoTask(
                 id = id.value,
@@ -152,49 +149,18 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    private fun deleteTask(){
+    fun deleteTask(toDoTask: ToDoTask){
         viewModelScope.launch(Dispatchers.IO) {
-            val toDoTask = ToDoTask(
-                id = id.value,
-                title = title.value,
-                description = description.value,
-                priority = priority.value,
-                date = date.value,
-                time = time.value,
-                image = image.value
-            )
             repo.deleteTask(toDoTask)
             repo.getAllTasks
         }
     }
 
-    private fun deleteAll() {
+    fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO)  {
             repo.deleteAllTasks()
             repo.getAllTasks
         }
-    }
-
-    fun handleDatabaseActions(action: Action){
-        when(action) {
-            Action.ADD ->{
-                addTask()
-            }
-            Action.UPDATE ->{
-                updateTask()
-            }
-            Action.DELETE ->{
-                deleteTask()
-            }
-            Action.DELETE_ALL ->{
-                deleteAll()
-            }
-
-            else -> {
-
-            }
-        }
-        this.action.value = Action.NO_ACTION
     }
 
     fun updateTaskFields(selectedTask: ToDoTask?) {
@@ -242,9 +208,5 @@ class SharedViewModel @Inject constructor(
 
     fun validateDelete(): Boolean {
         return title.value.isNotEmpty() or description.value.isNotEmpty()
-    }
-
-    fun updateAction(newAction: Action) {
-        action.value = newAction
     }
 }

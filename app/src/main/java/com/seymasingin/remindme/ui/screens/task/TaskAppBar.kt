@@ -1,6 +1,5 @@
 package com.seymasingin.remindme.ui.screens.task
 
-
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -8,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -25,32 +23,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.seymasingin.remindme.R
-import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
-import com.seymasingin.remindme.util.Action
+import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
 
 @Composable
 fun TaskAppBar(
     selectedTask: ToDoTask?,
-    navigateToListScreen: (Action) -> Unit
+    sharedViewModel: SharedViewModel,
+    navController: NavController
 ) {
     if (selectedTask == null) {
-        NewTaskAppBar(navigateToListScreen)
+        NewTaskAppBar(sharedViewModel, navController)
     } else {
-        ExistingTaskAppBar(selectedTask, navigateToListScreen)
+        ExistingTaskAppBar(selectedTask, sharedViewModel, navController)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTaskAppBar(
-    navigateToListScreen: (Action) -> Unit
+    sharedViewModel: SharedViewModel,
+    navController: NavController
 ) {
     TopAppBar(
         navigationIcon = {
-            BackAction(onBackClicked = navigateToListScreen)
+            BackAction(navController)
         },
         title = {
             Text(
@@ -62,7 +61,7 @@ fun NewTaskAppBar(
             containerColor = MaterialTheme.colorScheme.background
         ),
         actions = {
-            DeleteAction(onDeleteClicked = navigateToListScreen)
+            DeleteAction(sharedViewModel, navController)
         }
     )
 }
@@ -71,11 +70,12 @@ fun NewTaskAppBar(
 @Composable
 fun ExistingTaskAppBar(
     selectedTask: ToDoTask,
-    navigateToListScreen: (Action) -> Unit
+    sharedViewModel: SharedViewModel,
+    navController: NavController
 ) {
     TopAppBar(
         navigationIcon = {
-            CloseAction(onCloseClicked = navigateToListScreen)
+            CloseAction(navController)
         },
         title = {
             Text(
@@ -89,17 +89,17 @@ fun ExistingTaskAppBar(
         ),
         actions = {
             SendAction(context = LocalContext.current, selectedTask)
-            DeleteAction(onDeleteClicked = navigateToListScreen)
+            DeleteAction(sharedViewModel, navController )
         }
     )
 }
 
 @Composable
 fun CloseAction(
-    onCloseClicked: (Action) -> Unit
+   navController: NavController
 ) {
     IconButton(onClick = {
-        onCloseClicked(Action.NO_ACTION)
+        navController.navigateUp()
     }) {
         Icon(
             imageVector = Icons.Filled.Close,
@@ -111,10 +111,14 @@ fun CloseAction(
 
 @Composable
 fun DeleteAction(
-    onDeleteClicked: (Action) -> Unit
+   sharedViewModel: SharedViewModel,
+   navController: NavController
 ) {
     IconButton(onClick = {
-        onDeleteClicked(Action.DELETE)
+        if(sharedViewModel.validateDelete()){
+            sharedViewModel.selectedTask.value?.let { sharedViewModel.deleteTask(it) }
+            navController.navigateUp()
+        }
     }) {
         Icon(
             imageVector = Icons.Filled.Delete,
@@ -126,10 +130,10 @@ fun DeleteAction(
 
 @Composable
 fun BackAction(
-    onBackClicked: (Action) -> Unit
+    navController: NavController
 ) {
     IconButton(onClick = {
-        onBackClicked(Action.NO_ACTION)
+        navController.navigateUp()
     }) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -184,28 +188,5 @@ fun SendAction(
             tint = colorResource(id = R.color.textcolor)
         )
     }
-}
-
-@Composable
-@Preview
-fun NewTaskAppBarPreview() {
-    NewTaskAppBar(navigateToListScreen = {})
-}
-
-@Composable
-@Preview
-fun ExistingTaskAppBarPrevie() {
-    ExistingTaskAppBar(
-        selectedTask = ToDoTask(
-            0,
-            "",
-            "",
-            Priority.HIGH,
-            "",
-            "",
-            ""),
-        navigateToListScreen= {}
-    )
-
 }
 

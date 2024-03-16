@@ -1,6 +1,5 @@
 package com.seymasingin.remindme.ui.screens.list
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -35,13 +34,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ContentAlpha
@@ -52,7 +49,6 @@ import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.theme.MEDIUM_PADDING
 import com.seymasingin.remindme.ui.theme.TASK_ITEM_ELEVATION
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
-import com.seymasingin.remindme.util.Action
 import com.seymasingin.remindme.util.RequestState
 
 @Composable
@@ -63,8 +59,8 @@ fun ListContent(
     highPriority: List<ToDoTask>,
     sortState: RequestState<Priority>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    onDeleteClicked: (Action, ToDoTask) -> Unit,
-    context: Context
+    context: Context,
+    sharedViewModel: SharedViewModel
 ) {
     if(sortState is RequestState.Success){
         when{
@@ -72,8 +68,8 @@ fun ListContent(
                 HandleListContent(
                     tasks = searchedTasks.data,
                     navigateToTaskScreen = navigateToTaskScreen,
-                    onDeleteClicked,
-                    context
+                    context,
+                    sharedViewModel
                 )
             }
 
@@ -82,8 +78,8 @@ fun ListContent(
                     HandleListContent(
                         tasks = tasks.data ,
                         navigateToTaskScreen = navigateToTaskScreen,
-                        onDeleteClicked,
-                        context
+                        context,
+                        sharedViewModel
                     )
                 }
             }
@@ -92,16 +88,16 @@ fun ListContent(
                 HandleListContent(
                     tasks = lowPriority,
                     navigateToTaskScreen = navigateToTaskScreen,
-                    onDeleteClicked,
-                    context
+                    context,
+                    sharedViewModel
                 )
             }
             sortState.data == Priority.HIGH -> {
                 HandleListContent(
                     tasks = highPriority,
                     navigateToTaskScreen = navigateToTaskScreen,
-                    onDeleteClicked,
-                    context
+                    context,
+                    sharedViewModel
                 )
             }
         }
@@ -112,12 +108,12 @@ fun ListContent(
 fun DisplayTasks(
     tasks: List<ToDoTask>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    onDeleteClicked: (Action, ToDoTask) -> Unit,
-    context: Context
+    context: Context,
+    sharedViewModel: SharedViewModel
     ) {
     LazyColumn{
         items(tasks){task ->
-            TaskItem(task, navigateToTaskScreen, onDeleteClicked, context )
+            TaskItem(task, navigateToTaskScreen, context, sharedViewModel )
         }
     }
 }
@@ -126,8 +122,8 @@ fun DisplayTasks(
 fun TaskItem(
     toDoTask: ToDoTask,
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    onDeleteClicked: (Action, ToDoTask) -> Unit,
-    context: Context
+    context: Context,
+    sharedViewModel: SharedViewModel
 ) {
     Surface(
         modifier = Modifier
@@ -163,7 +159,9 @@ fun TaskItem(
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
                     )
-                    IconButton(onClick = { onDeleteClicked(Action.DELETE, toDoTask) }
+                    IconButton(onClick = {
+                        sharedViewModel.deleteTask(toDoTask)
+                    }
                     ) {
                         Box(
                             modifier = Modifier
@@ -246,8 +244,8 @@ fun TaskItem(
 fun HandleListContent(
     tasks:List<ToDoTask>,
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    onDeleteClicked: (Action, ToDoTask) -> Unit,
-    context: Context
+    context: Context,
+    sharedViewModel: SharedViewModel
 ) {
     if(tasks.isEmpty()){
         EmptyContent()
@@ -255,8 +253,8 @@ fun HandleListContent(
     DisplayTasks(
         tasks = tasks,
         navigateToTaskScreen = navigateToTaskScreen,
-        onDeleteClicked = onDeleteClicked,
-        context
+        context,
+        sharedViewModel
     )
 }
 
@@ -319,17 +317,6 @@ fun SearchView(
             unfocusedContainerColor = colorResource(id = R.color.fabColor),
             focusedContainerColor = colorResource(id = R.color.fabColor)
         )
-    )
-}
-
-@Composable
-@Preview
-fun TaskItemPreview() {
-    TaskItem(
-        toDoTask = ToDoTask(0, "HOMEWORK", "RemindMe", Priority.HIGH, "", "", ""),
-        navigateToTaskScreen = {},
-        onDeleteClicked = { action, task -> },
-        context = LocalContext.current
     )
 }
 

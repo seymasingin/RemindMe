@@ -1,5 +1,7 @@
 package com.seymasingin.remindme.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -10,6 +12,7 @@ import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
 import com.seymasingin.remindme.util.Constants.LIST_SCREEN
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SetupNavigation(
     navController: NavHostController,
@@ -26,7 +29,7 @@ fun SetupNavigation(
         )
         taskComposable(
             sharedViewModel,
-            screen.list,
+            navController,
         )
     }
 }

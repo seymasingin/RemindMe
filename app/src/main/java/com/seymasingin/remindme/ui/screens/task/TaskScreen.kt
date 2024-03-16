@@ -1,7 +1,9 @@
 package com.seymasingin.remindme.ui.screens.task
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,19 +20,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.seymasingin.remindme.R
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
 import com.seymasingin.remindme.ui.theme.LARGE_PADDING
 import com.seymasingin.remindme.ui.viewmodel.SharedViewModel
-import com.seymasingin.remindme.util.Action
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun TaskScreen(
     selectedTask: ToDoTask?,
     sharedViewModel: SharedViewModel,
-    navigateToListScreen: (Action) -> Unit
+    navController: NavController
 ) {
     val title: String by sharedViewModel.title
     val description: String by sharedViewModel.description
@@ -45,15 +48,9 @@ fun TaskScreen(
         topBar = {
             TaskAppBar(
                 selectedTask,
-                navigateToListScreen = {action ->
-                    if(action == Action.NO_ACTION){
-                        navigateToListScreen(action)
-                    }
-                    if(action == Action.DELETE){
-                        sharedViewModel.validateDelete()
-                        navigateToListScreen(action)
-                    }
-                })
+                sharedViewModel,
+                navController
+            )
         }
     ) {innerPadding ->
         Column(
@@ -100,13 +97,15 @@ fun TaskScreen(
                 onClick = {
                     if(selectedTask == null){
                         if(sharedViewModel.validateFields()){
-                            navigateToListScreen(Action.ADD)
+                            sharedViewModel.addTask()
+                            navController.navigateUp()
                         }
                         else{
                             displayToast(context)
                         }
                     }else{
-                        navigateToListScreen(Action.UPDATE)
+                        sharedViewModel.updateTask()
+                        navController.navigateUp()
                     }
                 },
                 elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
