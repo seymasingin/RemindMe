@@ -32,6 +32,7 @@ object NotificationUtils {
             .setContentText(reminderText)
             .setSmallIcon(R.drawable.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(longArrayOf(100, 200, 300, 400, 500))
 
         notificationManager.notify(1, builder.build())
     }

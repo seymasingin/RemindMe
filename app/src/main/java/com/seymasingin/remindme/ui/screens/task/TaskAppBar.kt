@@ -1,10 +1,13 @@
 package com.seymasingin.remindme.ui.screens.task
 
+
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -17,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -143,25 +145,34 @@ fun SendAction(
 ) {
     IconButton(
         onClick = {
-            val hasWhatsApp = try {
-                context.packageManager.getPackageInfo("com.whatsapp", 0) != null
-            } catch (e: PackageManager.NameNotFoundException) {
-                false
+            val whatsappInstalled: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                try {
+                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.ApplicationInfoFlags.of(0))
+                    true
+                } catch (e: PackageManager.NameNotFoundException) {
+                    false
+                }
+            } else {
+                try {
+                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.GET_META_DATA)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
             }
 
-            if (hasWhatsApp) {
+            if (whatsappInstalled) {
                 val intent = Intent(Intent.ACTION_SEND)
-
                 intent.putExtra(Intent.EXTRA_TEXT, "Note Title: ${selectedTask.title}\n\n" +
-                        "Description: ${selectedTask.description}\n\n" +
-                        "Date: ${selectedTask.date}\n\n" +
-                        "Time: ${selectedTask.time}")
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
+                        "Description: ${selectedTask.description}\n\n" )
+                if (!selectedTask.image.isNullOrEmpty()) {
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(selectedTask.image))
+                }
                 intent.setPackage("com.whatsapp")
-                intent.setType("text/plain")
+                intent.type="text/plain"
                 context.startActivity(intent)
             } else {
-                Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Please install whatsapp first.", Toast.LENGTH_SHORT).show()
             }
         }
     ) {

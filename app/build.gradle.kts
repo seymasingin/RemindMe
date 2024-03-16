@@ -13,8 +13,8 @@ android {
         applicationId = "com.seymasingin.remindme"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 9
+        versionName = "1.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -92,6 +92,9 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    implementation("androidx.compose.foundation:foundation:1.6.3")
+
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.1-alpha")
+
 
 }

@@ -3,15 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+           tools:ignore="QueryAllPackagesPermission" />
+
 
     <application
         android:name=".TodoApplication"
+        android:screenOrientation="portrait"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,11 +22,11 @@
         android:roundIcon="@mipmap/ic_remindme_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RemindMe"
-        tools:targetApi="tiramisu">
+        tools:targetApi="tiramisu"
+        tools:ignore="DiscouragedApi">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.RemindMe">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,5 +35,10 @@
             </intent-filter>
         </activity>
     </application>
+
+    <queries>
+        <package android:name="com.whatsapp"/>
+
+    </queries>
 
 </manifest>

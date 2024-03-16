@@ -240,6 +240,10 @@ class SharedViewModel @Inject constructor(
         return title.value.isNotEmpty() && description.value.isNotEmpty()
     }
 
+    fun validateDelete(): Boolean {
+        return title.value.isNotEmpty() or description.value.isNotEmpty()
+    }
+
     fun updateAction(newAction: Action) {
         action.value = newAction
     }

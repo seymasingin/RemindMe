@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
@@ -52,19 +49,17 @@ fun TaskScreen(
                     if(action == Action.NO_ACTION){
                         navigateToListScreen(action)
                     }
-                    else{
-                        if(sharedViewModel.validateFields()){
-                            navigateToListScreen(action)
-                        }
-                        else{
-                            displayToast(context)
-                        }
+                    if(action == Action.DELETE){
+                        sharedViewModel.validateDelete()
+                        navigateToListScreen(action)
                     }
                 })
         }
     ) {innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
+
         ){
             Box(modifier = Modifier.weight(8f)){
                 TaskContent(
@@ -93,14 +88,15 @@ fun TaskScreen(
                     image= image,
                     onImageChange = {
                         sharedViewModel.updateImage(it)
-                    }
+                    },
                 )
             }
             ElevatedButton(
                 modifier= Modifier
                     .fillMaxWidth()
                     .padding(all = LARGE_PADDING)
-                    .weight(1f),
+                    .weight(1f)
+                ,
                 onClick = {
                     if(selectedTask == null){
                         if(sharedViewModel.validateFields()){

@@ -1,9 +1,12 @@
 package com.seymasingin.remindme.ui.screens.list
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_SEND
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -186,27 +189,37 @@ fun TaskItem(
                     )
                     IconButton(
                         onClick = {
-                            val hasWhatsApp = try {
-                                context.packageManager.getPackageInfo("com.whatsapp", 0) != null
-                            } catch (e: PackageManager.NameNotFoundException) {
-                                false
+                            val whatsappInstalled: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                try {
+                                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.ApplicationInfoFlags.of(0))
+                                    true
+                                } catch (e: PackageManager.NameNotFoundException) {
+                                    false
+                                }
+                            } else {
+                                try {
+                                    context.packageManager.getApplicationInfo("com.whatsapp", PackageManager.GET_META_DATA)
+                                    true
+                                } catch (e: Exception) {
+                                    false
+                                }
                             }
 
-                            if (hasWhatsApp) {
-                                val intent = Intent(Intent.ACTION_SEND)
-
-                                intent.putExtra(Intent.EXTRA_TEXT, "Note Title: ${toDoTask.title}\n\n" +
-                                        "Description: ${toDoTask.description}\n\n" +
-                                        "Date: ${toDoTask.date}\n\n" +
-                                        "Time: ${toDoTask.time}")
-                                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(toDoTask.image))
+                            if (whatsappInstalled) {
+                                val intent = Intent(ACTION_SEND)
+                                intent.putExtra(Intent.EXTRA_TEXT,
+                                    "Note Title: ${toDoTask.title}\n\n" +
+                                        "Description: ${toDoTask.description}\n\n")
+                                if (!toDoTask.image.isNullOrEmpty()) {
+                                    intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(toDoTask.image))
+                                }
                                 intent.setPackage("com.whatsapp")
                                 intent.setType("text/plain")
                                 context.startActivity(intent)
                             } else {
-                                Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Please install whatsapp first.", Toast.LENGTH_SHORT).show()
                             }
-                        },
+                        }
                     ) {
                         Box(
                             modifier = Modifier
