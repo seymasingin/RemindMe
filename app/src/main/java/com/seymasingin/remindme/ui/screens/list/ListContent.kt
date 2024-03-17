@@ -18,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -33,7 +35,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +46,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.ContentAlpha
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.seymasingin.remindme.R
 import com.seymasingin.remindme.data.models.Priority
 import com.seymasingin.remindme.data.models.ToDoTask
@@ -118,6 +124,7 @@ fun DisplayTasks(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun TaskItem(
     toDoTask: ToDoTask,
@@ -150,7 +157,7 @@ fun TaskItem(
                     .weight(20f)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                ){
+                ) {
                     Text(
                         modifier = Modifier.weight(8f),
                         text = toDoTask.title,
@@ -159,6 +166,14 @@ fun TaskItem(
                         fontWeight = FontWeight.Bold,
                         maxLines = 1
                     )
+                    if(toDoTask.image?.isNotEmpty() == true){
+                        GlideImage(
+                            modifier = Modifier.size(36.dp).clip(CircleShape),
+                            model = toDoTask.image,
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                     IconButton(onClick = {
                         sharedViewModel.deleteTask(toDoTask)
                     }
@@ -168,11 +183,11 @@ fun TaskItem(
                                 .fillMaxWidth()
                                 .weight(1f),
                             contentAlignment = Alignment.TopEnd
-                        ){
+                        ) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = "",
-                                tint= colorResource(id = R.color.textcolor)
+                                tint = colorResource(id = R.color.textcolor)
                             )
                         }
                     }
@@ -319,6 +334,10 @@ fun SearchView(
         )
     )
 }
+
+/*
+
+ */
 
 
 
